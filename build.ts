@@ -8,6 +8,8 @@ const findRoot = require("find-root");
 
 import packageInfo from "./package.json";
 
+const langArg = process.argv[2];
+
 const exec = util.promisify(require("child_process").exec);
 
 const outDir = path.join(__dirname, "out");
@@ -49,7 +51,8 @@ process.chdir(outDir);
 
 const grammars = Object.keys(packageInfo.devDependencies)
   .filter((n) => n.startsWith("tree-sitter-") && n !== "tree-sitter-cli")
-  .concat("@tlaplus/tree-sitter-tlaplus");
+  .concat("@tlaplus/tree-sitter-tlaplus")
+  .filter((s) => !langArg || s.includes(langArg));
 
 PromisePool.withConcurrency(os.cpus().length)
   .for(grammars)
